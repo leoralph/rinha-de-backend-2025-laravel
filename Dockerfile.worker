@@ -20,6 +20,4 @@ COPY . /app
 RUN composer dump-autoload --optimize
 RUN php artisan optimize
 
-# CMD [ "php", "artisan", "migrate", "--force" ]
-
-ENTRYPOINT ["php", "artisan", "octane:start", "--host=0.0.0.0", "--max-requests=1000000000"]
+ENTRYPOINT ["php", "artisan", "horizon"]
