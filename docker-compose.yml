@@ -1,94 +1,70 @@
 services:
+    caddy:
+        image: caddy:latest
+        container_name: caddy
+        restart: unless-stopped
+        ports:
+            - "9999:9999"
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+        networks:
+            - backend
 
-  balancer:
-    image: nginx:latest
-    ports:
-      - "9999:80"
-    networks:
-      - backend
-    volumes:
-      - ./default.conf:/etc/nginx/conf.d/default.conf
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'
-          memory: 25M
+    api01:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: leoralph/rinha-de-backend-2025
+        networks:
+            - backend
+            - payment-processor
+        depends_on:
+            - redis
 
-  api01:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: leoralph/rinha-de-backend-2025
-    networks:
-      - backend
-      - payment-processor
-    depends_on:
-      - database
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 100M
+    api02:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: leoralph/rinha-de-backend-2025
+        networks:
+            - backend
+            - payment-processor
+        depends_on:
+            - redis
+    api03:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: leoralph/rinha-de-backend-2025
+        networks:
+            - backend
+            - payment-processor
+        depends_on:
+            - redis
 
-  api02:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: leoralph/rinha-de-backend-2025
-    networks:
-      - backend
-      - payment-processor
-    depends_on:
-      - database
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 100M
+    api04:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: leoralph/rinha-de-backend-2025
+        networks:
+            - backend
+            - payment-processor
+        depends_on:
+            - redis
 
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.worker
-    image: leoralph/rinha-de-backend-2025-worker
-    networks:
-      - backend
-      - payment-processor
-    depends_on:
-      - database
-    deploy:
-      resources:
-        limits:
-          cpus: '0.4'
-          memory: 300M
-
-  database:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rinha
-      MYSQL_DATABASE: rinha
-    ports:
-      - "3306:3306"
-    networks:
-      - backend
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 150M
-
-  redis:
-    image: redis:latest
-    networks:
-      - backend
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 50M
+    redis:
+        image: redis:latest
+        networks:
+            - backend
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.3"
+                    memory: 50M
 
 networks:
-  backend:
-    driver: bridge
-  payment-processor:
-    external: true
+    backend:
+        driver: bridge
+    payment-processor:
+        external: true

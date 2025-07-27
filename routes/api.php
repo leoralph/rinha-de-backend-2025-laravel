@@ -7,5 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('payments-summary', [PaymentController::class, 'index']);
 Route::post('payments', [PaymentController::class, 'store']);
 Route::post('purge-payments', function () {
-    Payment::truncate();
+    cache()->clear();
 });

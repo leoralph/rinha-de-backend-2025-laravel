@@ -2,7 +2,7 @@ FROM dunglas/frankenphp:1.8-php8.4-alpine
 
 RUN apk add --no-cache autoconf build-base
 
-RUN docker-php-ext-install pcntl pdo_mysql 
+RUN docker-php-ext-install pcntl
 
 RUN pecl install redis \
     && docker-php-ext-enable redis
@@ -19,7 +19,5 @@ COPY . /app
 
 RUN composer dump-autoload --optimize
 RUN php artisan optimize
-
-# CMD [ "php", "artisan", "migrate", "--force" ]
 
 ENTRYPOINT ["php", "artisan", "octane:start", "--host=0.0.0.0", "--max-requests=1000000000"]
